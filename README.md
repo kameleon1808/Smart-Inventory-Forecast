@@ -45,6 +45,13 @@ php artisan queue:work
 6) Scheduler (cron)  
 Add to crontab: `* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1`
 
+### Demo data
+Seed a rich demo dataset (refreshes DB):  
+```bash
+php artisan demo:seed
+```
+Outputs include sample credentials (admin/manager/waiter/viewer variants). Default password: `password`.
+
 ## Forecast-service
 Located in `forecast-service/`.
 ```bash
