@@ -6,6 +6,7 @@ use App\Domain\Inventory\Item;
 use App\Domain\Inventory\ItemCategory;
 use App\Domain\Inventory\Unit;
 use App\Http\Controllers\Concerns\ValidatesItem;
+use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -45,13 +46,14 @@ class ItemController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, AuditLogger $audit): RedirectResponse
     {
         $organization = $request->attributes->get('active_organization');
         $data = $this->validateItem($request, $organization);
         $data['organization_id'] = $organization->id;
 
         $item = Item::create($data);
+        $audit->log('item.created', $item, null, $item->toArray());
 
         return redirect()->route('items.edit', $item)->with('status', 'item-created');
     }
@@ -68,14 +70,16 @@ class ItemController extends Controller
         ]);
     }
 
-    public function update(Request $request, Item $item): RedirectResponse
+    public function update(Request $request, Item $item, AuditLogger $audit): RedirectResponse
     {
         $organization = $request->attributes->get('active_organization');
         abort_unless($item->organization_id === $organization->id, 404);
         $data = $this->validateItem($request, $organization, $item);
         $data['organization_id'] = $organization->id;
 
+        $before = $item->toArray();
         $item->update($data);
+        $audit->log('item.updated', $item, $before, $item->fresh()->toArray());
 
         return redirect()->route('items.edit', $item)->with('status', 'item-updated');
     }

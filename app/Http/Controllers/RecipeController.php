@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Domain\Inventory\Item;
 use App\Domain\Recipes\MenuItem;
+use App\Services\AuditLogger;
 use App\Services\RecipeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class RecipeController extends Controller
         ]);
     }
 
-    public function store(Request $request, MenuItem $menuItem, RecipeService $recipes): RedirectResponse
+    public function store(Request $request, MenuItem $menuItem, RecipeService $recipes, AuditLogger $audit): RedirectResponse
     {
         $data = $request->validate([
             'valid_from' => ['required', 'date'],
@@ -41,12 +42,14 @@ class RecipeController extends Controller
         ]);
 
         try {
-            $recipes->createVersion($menuItem, $data['valid_from'], $data['ingredients']);
+            $version = $recipes->createVersion($menuItem, $data['valid_from'], $data['ingredients']);
         } catch (ValidationException $e) {
             throw $e;
         } catch (\Throwable $e) {
             return back()->withErrors(['valid_from' => $e->getMessage()])->withInput();
         }
+
+        $audit->log('recipe.version.created', $version ?? $menuItem, null, ['menu_item' => $menuItem->id, 'valid_from' => $data['valid_from']]);
 
         return redirect()->route('recipes.create', $menuItem)->with('status', 'recipe-version-created');
     }

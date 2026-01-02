@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\Inventory\Item;
 use App\Domain\Inventory\StockCount;
 use App\Domain\Warehouse;
+use App\Services\AuditLogger;
 use App\Services\StockCountService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,13 +67,14 @@ class StockCountController extends Controller
         return redirect()->route('stock-counts.edit', $stockCount)->with('status', 'count-updated');
     }
 
-    public function post(Request $request, StockCount $stockCount, StockCountService $service): RedirectResponse
+    public function post(Request $request, StockCount $stockCount, StockCountService $service, AuditLogger $audit): RedirectResponse
     {
         $this->authorizeLocation($request, $stockCount);
 
         $request->user()->can('post-stock-count') || abort(403);
 
         $differences = $service->post($stockCount);
+        $audit->log('stockcount.posted', $stockCount, null, ['warehouse_id' => $stockCount->warehouse_id, 'counted_at' => $stockCount->counted_at]);
 
         return redirect()->route('stock.ledger')->with([
             'status' => 'count-posted',

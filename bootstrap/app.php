@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Domain\Location;
+use App\Http\Middleware\EnforcePeriodLock;
 use App\Jobs\PredictForecastJob;
 use App\Jobs\TrainForecastJob;
 use App\Jobs\AnomalyScanJob;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'org.context' => EnsureOrganizationAndLocation::class,
+            'period.lock' => EnforcePeriodLock::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule): void {

@@ -7,6 +7,7 @@ use App\Domain\Procurement\PurchaseOrder;
 use App\Domain\Procurement\PurchaseOrderLine;
 use App\Domain\Warehouse;
 use App\Services\ProcurementSuggestionService;
+use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +72,7 @@ class ProcurementSuggestionController extends Controller
         return redirect()->route('procurement.suggestions')->with('status', 'po-created');
     }
 
-    public function approve(PurchaseOrder $purchaseOrder): RedirectResponse
+    public function approve(PurchaseOrder $purchaseOrder, AuditLogger $audit): RedirectResponse
     {
         $this->authorize('approve-po');
 
@@ -84,6 +85,8 @@ class ProcurementSuggestionController extends Controller
             'approved_by' => request()->user()->id,
             'approved_at' => now(),
         ]);
+
+        $audit->log('po.approved', $purchaseOrder, null, $purchaseOrder->fresh()->toArray());
 
         return back()->with('status', 'po-approved');
     }

@@ -39,6 +39,12 @@ new class extends Component
                     <x-nav-link :href="route('anomalies.index')" :active="request()->routeIs('anomalies.*')" wire:navigate>
                         {{ __('Alerts') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('import-export.index')" :active="request()->routeIs('import-export.index')" wire:navigate>
+                        {{ __('Import/Export') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('audit.index')" :active="request()->routeIs('audit.index')" wire:navigate>
+                        {{ __('Audit') }}
+                    </x-nav-link>
                     @php
                         $locationsNav = auth()->user()?->locations()->with('organization')->get() ?? collect();
                         $activeLocationId = session('active_location_id');
@@ -112,6 +118,15 @@ new class extends Component
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('anomalies.index')" :active="request()->routeIs('anomalies.*')" wire:navigate>
                 {{ __('Alerts') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('import-export.index')" :active="request()->routeIs('import-export.index')" wire:navigate>
+                {{ __('Import/Export') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('audit.index')" :active="request()->routeIs('audit.index')" wire:navigate>
+                {{ __('Audit') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('period-lock.edit')" :active="request()->routeIs('period-lock.*')" wire:navigate>
+                {{ __('Period lock') }}
             </x-responsive-nav-link>
         </div>
 

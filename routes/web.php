@@ -15,6 +15,9 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\ForecastController;
 use App\Http\Controllers\AnomalyController;
 use App\Http\Controllers\AnomalyThresholdController;
+use App\Http\Controllers\ImportExportController;
+use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\PeriodLockController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -47,13 +50,13 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
     Route::get('stock/receipt', [StockTransactionController::class, 'createReceipt'])->name('stock.receipt.create');
     Route::get('stock/waste', [StockTransactionController::class, 'createWaste'])->name('stock.waste.create');
     Route::get('stock/internal-use', [StockTransactionController::class, 'createInternalUse'])->name('stock.internal.create');
-    Route::post('stock', [StockTransactionController::class, 'store'])->name('stock.store');
+    Route::post('stock', [StockTransactionController::class, 'store'])->middleware('period.lock')->name('stock.store');
 
     Route::get('stock-counts/create', [\App\Http\Controllers\StockCountController::class, 'create'])->name('stock-counts.create');
-    Route::post('stock-counts', [\App\Http\Controllers\StockCountController::class, 'store'])->name('stock-counts.store');
+    Route::post('stock-counts', [\App\Http\Controllers\StockCountController::class, 'store'])->middleware('period.lock')->name('stock-counts.store');
     Route::get('stock-counts/{stockCount}/edit', [\App\Http\Controllers\StockCountController::class, 'edit'])->name('stock-counts.edit');
-    Route::put('stock-counts/{stockCount}', [\App\Http\Controllers\StockCountController::class, 'update'])->name('stock-counts.update');
-    Route::post('stock-counts/{stockCount}/post', [\App\Http\Controllers\StockCountController::class, 'post'])->middleware('can:post-stock-count')->name('stock-counts.post');
+    Route::put('stock-counts/{stockCount}', [\App\Http\Controllers\StockCountController::class, 'update'])->middleware('period.lock')->name('stock-counts.update');
+    Route::post('stock-counts/{stockCount}/post', [\App\Http\Controllers\StockCountController::class, 'post'])->middleware(['can:post-stock-count', 'period.lock'])->name('stock-counts.post');
 
     Route::resource('menu-items', MenuItemController::class)->except(['show', 'destroy']);
     Route::get('recipes/{menuItem}', [RecipeController::class, 'create'])->name('recipes.create');
@@ -72,6 +75,12 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
     Route::post('anomalies/{anomaly}/status', [AnomalyController::class, 'updateStatus'])->middleware('can:resolve-anomalies')->name('anomalies.status');
     Route::get('anomaly-thresholds', [AnomalyThresholdController::class, 'index'])->middleware('can:view-location-data')->name('anomalies.thresholds');
     Route::post('anomaly-thresholds', [AnomalyThresholdController::class, 'store'])->middleware('can:resolve-anomalies')->name('anomalies.thresholds.store');
+    Route::get('data/import-export', [ImportExportController::class, 'index'])->middleware('can:view-location-data')->name('import-export.index');
+    Route::post('data/import', [ImportExportController::class, 'import'])->middleware('can:view-location-data')->name('import.run');
+    Route::post('data/export', [ImportExportController::class, 'export'])->middleware('can:view-location-data')->name('export.run');
+    Route::get('audit-logs', [AuditLogController::class, 'index'])->middleware('can:view-location-data')->name('audit.index');
+    Route::get('period-lock', [PeriodLockController::class, 'edit'])->middleware('can:resolve-anomalies')->name('period-lock.edit');
+    Route::post('period-lock', [PeriodLockController::class, 'update'])->middleware('can:resolve-anomalies')->name('period-lock.update');
 
     Route::get('procurement/suggestions', [ProcurementSuggestionController::class, 'index'])->name('procurement.suggestions');
     Route::post('procurement/suggestions', [ProcurementSuggestionController::class, 'store'])->name('procurement.suggestions.store');

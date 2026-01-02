@@ -7,6 +7,7 @@ use App\Domain\Inventory\StockTransaction;
 use App\Domain\Inventory\StockTransactionLine;
 use App\Domain\Inventory\Unit;
 use App\Domain\Warehouse;
+use App\Services\AuditLogger;
 use App\Services\UnitConversionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -56,7 +57,7 @@ class StockTransactionController extends Controller
         return $this->formView($request, StockTransaction::TYPE_INTERNAL_USE);
     }
 
-    public function store(Request $request, UnitConversionService $converter): RedirectResponse
+    public function store(Request $request, UnitConversionService $converter, AuditLogger $audit): RedirectResponse
     {
         $organization = $request->attributes->get('active_organization');
         $location = $request->attributes->get('active_location');
@@ -102,7 +103,7 @@ class StockTransactionController extends Controller
             $quantityInBase *= -1;
         }
 
-        DB::transaction(function () use ($organization, $location, $data, $item, $quantityInBase): void {
+        DB::transaction(function () use ($organization, $location, $data, $item, $quantityInBase, $audit): void {
             $transaction = StockTransaction::create([
                 'organization_id' => $organization->id,
                 'location_id' => $location->id,
@@ -124,6 +125,15 @@ class StockTransactionController extends Controller
                 'quantity_in_base' => $quantityInBase,
                 'unit_cost' => $data['unit_cost'] ?? null,
             ]);
+
+            if ($data['type'] === StockTransaction::TYPE_ADJUSTMENT) {
+                $audit->log('stock.adjustment', $transaction, null, [
+                    'item_id' => $item->id,
+                    'quantity' => $data['quantity'],
+                    'warehouse_id' => $data['warehouse_id'],
+                    'happened_at' => $data['happened_at'],
+                ]);
+            }
         });
 
         return redirect()->route('stock.ledger')->with('status', 'transaction-posted');
