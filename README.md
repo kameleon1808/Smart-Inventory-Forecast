@@ -30,6 +30,13 @@ Laravel 12 scaffolding with Breeze (Livewire), Vite, and a modular-ready folder 
 - Active location selector in the nav stores selection in session.
 - Admin page (`/locations/manage`) lets admins create locations and assign users with roles.
 
+## Inventory items
+- Seeded categories: Coffee, Alcohol, Soft Drinks, Food, Supplies.
+- Seeded units: g, kg, ml, l, pcs plus conversions (kg<->g, l<->ml).
+- Items are organization-scoped. Base unit is required. Fields: sku, name, category, base unit, pack_size, min_stock, safety_stock, lead_time_days, shelf_life_days (nullable), is_active.
+- UI: Items list/filter (`/items`), create/edit forms (`/items/create`, `/items/{id}/edit`).
+- API: `/api/items` (`GET index`, `GET /{id}`, `POST`, `PUT /{id}`) requires auth + org context.
+
 ## Tooling
 - Format: `vendor/bin/pint`
 - Static analysis: `vendor/bin/phpstan analyse` (baseline: `phpstan-baseline.neon`)

@@ -1,6 +1,126 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Class App\\Domain\\Inventory\\Item uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:baseUnit\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:category\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:organization\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:scopeActive\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:scopeActive\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:scopeCategory\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:scopeCategory\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:scopeForOrganization\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:scopeForOrganization\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:scopeSearch\(\) has parameter \$query with generic class Illuminate\\Database\\Eloquent\\Builder but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Item\:\:scopeSearch\(\) return type with generic class Illuminate\\Database\\Eloquent\\Builder does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Item.php
+
+		-
+			message: '#^Class App\\Domain\\Inventory\\ItemCategory uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/ItemCategory.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\ItemCategory\:\:items\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/ItemCategory.php
+
+		-
+			message: '#^Class App\\Domain\\Inventory\\Unit uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Unit.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Unit\:\:conversionsFrom\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Unit.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\Unit\:\:conversionsTo\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/Unit.php
+
+		-
+			message: '#^Class App\\Domain\\Inventory\\UnitConversion uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/UnitConversion.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\UnitConversion\:\:fromUnit\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/UnitConversion.php
+
+		-
+			message: '#^Method App\\Domain\\Inventory\\UnitConversion\:\:toUnit\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Domain/Inventory/UnitConversion.php
+
+		-
 			message: '#^Class App\\Domain\\Location uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
 			identifier: missingType.generics
 			count: 1

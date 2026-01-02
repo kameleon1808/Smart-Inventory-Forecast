@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\LocationController as AdminLocationController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationContextController;
 use App\Http\Controllers\LocationDataController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,8 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
 
     Route::post('locations/activate', [LocationContextController::class, 'store'])
         ->name('locations.activate');
+
+    Route::resource('items', ItemController::class)->except(['show', 'destroy']);
 });
 
 Route::view('profile', 'profile')
