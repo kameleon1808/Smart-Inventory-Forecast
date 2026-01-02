@@ -29,7 +29,7 @@ new class extends Component
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex items-center">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
@@ -45,6 +45,14 @@ new class extends Component
                     <x-nav-link :href="route('audit.index')" :active="request()->routeIs('audit.index')" wire:navigate>
                         {{ __('Audit') }}
                     </x-nav-link>
+                    <form method="POST" action="{{ route('locale.update') }}" class="flex items-center">
+                        @csrf
+                        <input type="hidden" name="locale" value="{{ app()->getLocale() === 'sr' ? 'en' : 'sr' }}">
+                        <label class="flex items-center gap-2 text-sm text-gray-700">
+                            <span>{{ __('SR') }}</span>
+                            <input type="checkbox" aria-label="Srpski" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" {{ app()->getLocale() === 'sr' ? 'checked' : '' }} onchange="this.form.locale.value = this.checked ? 'sr' : 'en'; this.form.submit();">
+                        </label>
+                    </form>
                     @php
                         $locationsNav = auth()->user()?->locations()->with('organization')->get() ?? collect();
                         $activeLocationId = session('active_location_id');
@@ -128,6 +136,14 @@ new class extends Component
             <x-responsive-nav-link :href="route('period-lock.edit')" :active="request()->routeIs('period-lock.*')" wire:navigate>
                 {{ __('Period lock') }}
             </x-responsive-nav-link>
+            <form method="POST" action="{{ route('locale.update') }}" class="px-4">
+                @csrf
+                <input type="hidden" name="locale" value="{{ app()->getLocale() === 'sr' ? 'en' : 'sr' }}">
+                <label class="flex items-center gap-2 text-sm text-gray-700">
+                    <span>{{ __('SR') }}</span>
+                    <input type="checkbox" aria-label="Srpski" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" {{ app()->getLocale() === 'sr' ? 'checked' : '' }} onchange="this.form.locale.value = this.checked ? 'sr' : 'en'; this.form.submit();">
+                </label>
+            </form>
         </div>
 
         <!-- Responsive Settings Options -->

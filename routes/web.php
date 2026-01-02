@@ -18,6 +18,7 @@ use App\Http\Controllers\AnomalyThresholdController;
 use App\Http\Controllers\ImportExportController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\PeriodLockController;
+use App\Http\Controllers\LocaleController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -94,5 +95,7 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
+
+Route::post('locale', [LocaleController::class, 'update'])->name('locale.update');
 
 require __DIR__.'/auth.php';

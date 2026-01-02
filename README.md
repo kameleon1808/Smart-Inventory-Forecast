@@ -52,6 +52,15 @@ php artisan demo:seed
 ```
 Outputs include sample credentials (admin/manager/waiter/viewer variants). Default password: `password`.
 
+To include the demo dataset during a normal seed/migrate flow, set `DEMO_SEED=true` in `.env` and run:
+```bash
+php artisan migrate:fresh --seed
+```
+
+### Language toggle
+- Navbar toggle switches between English (`en`) and Serbian (`sr`).
+- Locale is stored in session; set via POST `/locale`.
+
 ## Forecast-service
 Located in `forecast-service/`.
 ```bash

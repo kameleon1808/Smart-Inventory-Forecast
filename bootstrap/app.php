@@ -11,6 +11,7 @@ use App\Jobs\TrainForecastJob;
 use App\Jobs\AnomalyScanJob;
 use App\Services\ForecastService;
 use App\Http\Middleware\EnsureOrganizationAndLocation;
+use App\Http\Middleware\SetLocale;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -24,6 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'org.context' => EnsureOrganizationAndLocation::class,
             'period.lock' => EnforcePeriodLock::class,
         ]);
+
+        $middleware->appendToGroup('web', SetLocale::class);
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->call(function () {
