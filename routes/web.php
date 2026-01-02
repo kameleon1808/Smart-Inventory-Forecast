@@ -12,6 +12,7 @@ use App\Http\Controllers\ExpectedConsumptionReportController;
 use App\Http\Controllers\VarianceReportController;
 use App\Http\Controllers\ProcurementSuggestionController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\ForecastController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -61,6 +62,8 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
 
     Route::get('reports/expected-consumption', [ExpectedConsumptionReportController::class, 'index'])->name('reports.expected-consumption');
     Route::get('reports/variance', [VarianceReportController::class, 'index'])->name('reports.variance');
+    Route::get('forecasts', [ForecastController::class, 'index'])->middleware('can:view-location-data')->name('forecast.index');
+    Route::post('forecasts/run', [ForecastController::class, 'generate'])->middleware('can:view-location-data')->name('forecast.run');
 
     Route::get('procurement/suggestions', [ProcurementSuggestionController::class, 'index'])->name('procurement.suggestions');
     Route::post('procurement/suggestions', [ProcurementSuggestionController::class, 'store'])->name('procurement.suggestions.store');
