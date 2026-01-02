@@ -36,6 +36,9 @@ new class extends Component
                     <x-nav-link :href="route('forecast.index')" :active="request()->routeIs('forecast.index')" wire:navigate>
                         {{ __('Forecasts') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('anomalies.index')" :active="request()->routeIs('anomalies.*')" wire:navigate>
+                        {{ __('Alerts') }}
+                    </x-nav-link>
                     @php
                         $locationsNav = auth()->user()?->locations()->with('organization')->get() ?? collect();
                         $activeLocationId = session('active_location_id');
@@ -106,6 +109,9 @@ new class extends Component
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('forecast.index')" :active="request()->routeIs('forecast.index')" wire:navigate>
                 {{ __('Forecasts') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('anomalies.index')" :active="request()->routeIs('anomalies.*')" wire:navigate>
+                {{ __('Alerts') }}
             </x-responsive-nav-link>
         </div>
 

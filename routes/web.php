@@ -13,6 +13,8 @@ use App\Http\Controllers\VarianceReportController;
 use App\Http\Controllers\ProcurementSuggestionController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\ForecastController;
+use App\Http\Controllers\AnomalyController;
+use App\Http\Controllers\AnomalyThresholdController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -64,6 +66,12 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
     Route::get('reports/variance', [VarianceReportController::class, 'index'])->name('reports.variance');
     Route::get('forecasts', [ForecastController::class, 'index'])->middleware('can:view-location-data')->name('forecast.index');
     Route::post('forecasts/run', [ForecastController::class, 'generate'])->middleware('can:view-location-data')->name('forecast.run');
+    Route::get('anomalies', [AnomalyController::class, 'index'])->middleware('can:view-location-data')->name('anomalies.index');
+    Route::get('anomalies/{anomaly}', [AnomalyController::class, 'show'])->middleware('can:view-location-data')->name('anomalies.show');
+    Route::post('anomalies/{anomaly}/comments', [AnomalyController::class, 'addComment'])->name('anomalies.comment');
+    Route::post('anomalies/{anomaly}/status', [AnomalyController::class, 'updateStatus'])->middleware('can:resolve-anomalies')->name('anomalies.status');
+    Route::get('anomaly-thresholds', [AnomalyThresholdController::class, 'index'])->middleware('can:view-location-data')->name('anomalies.thresholds');
+    Route::post('anomaly-thresholds', [AnomalyThresholdController::class, 'store'])->middleware('can:resolve-anomalies')->name('anomalies.thresholds.store');
 
     Route::get('procurement/suggestions', [ProcurementSuggestionController::class, 'index'])->name('procurement.suggestions');
     Route::post('procurement/suggestions', [ProcurementSuggestionController::class, 'store'])->name('procurement.suggestions.store');

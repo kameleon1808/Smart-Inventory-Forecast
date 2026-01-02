@@ -7,6 +7,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Domain\Location;
 use App\Jobs\PredictForecastJob;
 use App\Jobs\TrainForecastJob;
+use App\Jobs\AnomalyScanJob;
 use App\Services\ForecastService;
 use App\Http\Middleware\EnsureOrganizationAndLocation;
 
@@ -63,6 +64,8 @@ return Application::configure(basePath: dirname(__DIR__))
                 );
             }
         })->dailyAt('03:00');
+
+        $schedule->job(new AnomalyScanJob())->dailyAt('04:00');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

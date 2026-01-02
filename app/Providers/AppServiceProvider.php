@@ -56,5 +56,15 @@ class AppServiceProvider extends ServiceProvider
 
             return $user->hasAtLeastRole(Role::MANAGER, $location);
         });
+
+        Gate::define('resolve-anomalies', function (User $user): bool {
+            $location = app()->bound('activeLocation') ? app('activeLocation') : null;
+
+            if (! $location) {
+                return false;
+            }
+
+            return $user->hasAtLeastRole(Role::MANAGER, $location);
+        });
     }
 }
