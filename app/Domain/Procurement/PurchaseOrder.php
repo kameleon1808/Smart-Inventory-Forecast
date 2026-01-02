@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class PurchaseOrder extends Model
 {
@@ -66,5 +67,28 @@ class PurchaseOrder extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(PurchaseReceipt::class);
+    }
+
+    public function receiptLines(): HasManyThrough
+    {
+        return $this->hasManyThrough(PurchaseReceiptLine::class, PurchaseReceipt::class);
+    }
+
+    /**
+     * @return array<int, float>
+     */
+    public function receivedTotalsByItem(): array
+    {
+        return $this->receiptLines()
+            ->selectRaw('item_id, SUM(qty_received_in_base) as total')
+            ->groupBy('item_id')
+            ->pluck('total', 'item_id')
+            ->map(fn ($value) => (float) $value)
+            ->toArray();
     }
 }

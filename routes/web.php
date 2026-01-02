@@ -11,6 +11,7 @@ use App\Http\Controllers\MenuItemUsageController;
 use App\Http\Controllers\ExpectedConsumptionReportController;
 use App\Http\Controllers\VarianceReportController;
 use App\Http\Controllers\ProcurementSuggestionController;
+use App\Http\Controllers\PurchaseOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -64,6 +65,10 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
     Route::get('procurement/suggestions', [ProcurementSuggestionController::class, 'index'])->name('procurement.suggestions');
     Route::post('procurement/suggestions', [ProcurementSuggestionController::class, 'store'])->name('procurement.suggestions.store');
     Route::post('procurement/purchase-orders/{purchaseOrder}/approve', [ProcurementSuggestionController::class, 'approve'])->middleware('can:approve-po')->name('procurement.purchase-orders.approve');
+    Route::get('procurement/purchase-orders', [PurchaseOrderController::class, 'index'])->name('procurement.purchase-orders.index');
+    Route::get('procurement/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'show'])->name('procurement.purchase-orders.show');
+    Route::get('procurement/purchase-orders/{purchaseOrder}/receive', [PurchaseOrderController::class, 'receiveForm'])->middleware('can:approve-po')->name('procurement.purchase-orders.receive-form');
+    Route::post('procurement/purchase-orders/{purchaseOrder}/receive', [PurchaseOrderController::class, 'receive'])->middleware('can:approve-po')->name('procurement.purchase-orders.receive');
 });
 
 Route::view('profile', 'profile')
