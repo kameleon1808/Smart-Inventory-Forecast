@@ -9,6 +9,8 @@ use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\MenuItemUsageController;
 use App\Http\Controllers\ExpectedConsumptionReportController;
+use App\Http\Controllers\VarianceReportController;
+use App\Http\Controllers\ProcurementSuggestionController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -57,6 +59,11 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
     Route::post('menu-usage', [MenuItemUsageController::class, 'store'])->name('menu-usage.store');
 
     Route::get('reports/expected-consumption', [ExpectedConsumptionReportController::class, 'index'])->name('reports.expected-consumption');
+    Route::get('reports/variance', [VarianceReportController::class, 'index'])->name('reports.variance');
+
+    Route::get('procurement/suggestions', [ProcurementSuggestionController::class, 'index'])->name('procurement.suggestions');
+    Route::post('procurement/suggestions', [ProcurementSuggestionController::class, 'store'])->name('procurement.suggestions.store');
+    Route::post('procurement/purchase-orders/{purchaseOrder}/approve', [ProcurementSuggestionController::class, 'approve'])->middleware('can:approve-po')->name('procurement.purchase-orders.approve');
 });
 
 Route::view('profile', 'profile')
