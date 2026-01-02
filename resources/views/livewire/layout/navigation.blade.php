@@ -33,6 +33,23 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    @php
+                        $locationsNav = auth()->user()?->locations()->with('organization')->get() ?? collect();
+                        $activeLocationId = session('active_location_id');
+                    @endphp
+                    @if ($locationsNav->isNotEmpty())
+                        <form method="POST" action="{{ route('locations.activate') }}" class="flex items-center gap-2">
+                            @csrf
+                            <label for="nav-location" class="text-sm text-gray-600">{{ __('Location') }}</label>
+                            <select id="nav-location" name="location_id" class="rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" onchange="this.form.submit()">
+                                @foreach ($locationsNav as $loc)
+                                    <option value="{{ $loc->id }}" @selected($loc->id === $activeLocationId)>
+                                        {{ $loc->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </form>
+                    @endif
                 </div>
             </div>
 

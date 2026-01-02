@@ -15,10 +15,20 @@ Laravel 12 scaffolding with Breeze (Livewire), Vite, and a modular-ready folder 
 6) `npm install` and then `npm run dev` (for HMR) or `npm run build` (for production assets).  
 7) `php artisan serve` and visit `http://localhost:8000`.
 
-## Auth
+## Auth & RBAC
 - Breeze (Livewire) provides login, registration, password reset, email verification, profile update, and logout flows.
-- Seeded user: `demo@example.com` / `password` (already email-verified).
+- Seeded users (all `password`):  
+  - Admin `admin@example.com`  
+  - Manager `manager@example.com`  
+  - Waiter `waiter@example.com`  
+  - Demo `demo@example.com`
+- Roles: `admin`, `manager`, `waiter`, `viewer`. Admin manages users/locations; manager can access location data; waiter limited to operational screens (future modules).
 - Mail is logged by default (`MAIL_MAILER=log`). For new signups, grab verification links from `storage/logs/laravel.log` or point mailer to your provider.
+
+## RBAC & locations
+- Middleware enforces an active organization/location context (auto-assigns a default location if none exists).
+- Active location selector in the nav stores selection in session.
+- Admin page (`/locations/manage`) lets admins create locations and assign users with roles.
 
 ## Tooling
 - Format: `vendor/bin/pint`
