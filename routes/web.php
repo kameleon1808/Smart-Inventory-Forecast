@@ -7,6 +7,8 @@ use App\Http\Controllers\LocationDataController;
 use App\Http\Controllers\StockTransactionController;
 use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\MenuItemUsageController;
+use App\Http\Controllers\ExpectedConsumptionReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome');
@@ -50,6 +52,11 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
     Route::resource('menu-items', MenuItemController::class)->except(['show', 'destroy']);
     Route::get('recipes/{menuItem}', [RecipeController::class, 'create'])->name('recipes.create');
     Route::post('recipes/{menuItem}', [RecipeController::class, 'store'])->name('recipes.store');
+
+    Route::get('menu-usage', [MenuItemUsageController::class, 'create'])->name('menu-usage.create');
+    Route::post('menu-usage', [MenuItemUsageController::class, 'store'])->name('menu-usage.store');
+
+    Route::get('reports/expected-consumption', [ExpectedConsumptionReportController::class, 'index'])->name('reports.expected-consumption');
 });
 
 Route::view('profile', 'profile')

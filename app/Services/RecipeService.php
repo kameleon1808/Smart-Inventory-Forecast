@@ -72,13 +72,13 @@ class RecipeService
 
         $overlap = $menuItem->recipeVersions()
             ->where(function ($q) use ($validFromDate, $validToDate) {
-                $q->where('valid_from', '<=', $validFromDate);
-                $q->where(function ($qq) use ($validToDate) {
-                    $qq->whereNull('valid_to');
-                    if ($validToDate) {
-                        $qq->orWhere('valid_to', '>=', $validToDate);
-                    }
-                });
+                $q->where('valid_from', '<=', $validFromDate)
+                    ->where(function ($qq) use ($validToDate) {
+                        $qq->whereNull('valid_to');
+                        if ($validToDate) {
+                            $qq->orWhere('valid_to', '>=', $validToDate);
+                        }
+                    });
             })->exists();
 
         if ($overlap) {
