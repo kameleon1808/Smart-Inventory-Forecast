@@ -18,6 +18,11 @@
                     {{ __('Saved') }}
                 </div>
             @endif
+            @if ($errors->any())
+                <div class="rounded-md bg-rose-50 px-4 py-3 text-sm text-rose-800">
+                    {{ __('Please fix the errors and try again.') }}
+                </div>
+            @endif
 
             @if (session('count_summary'))
                 <div class="rounded-md bg-blue-50 px-4 py-3 text-sm text-blue-800">
@@ -27,7 +32,7 @@
             @endif
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6"
-                 x-data="stockCountForm({ lines: {{ json_encode($count->lines->map(fn($line) => ['item_id' => $line->item_id, 'counted_quantity' => (float) $line->counted_quantity_in_base])) }} })">
+                 x-data="stockCountForm({ lines: {{ json_encode($initialLines ?? []) }} })">
                 <form method="POST" action="{{ $count->exists ? route('stock-counts.update', $count) : route('stock-counts.store') }}" class="space-y-6">
                     @csrf
                     @if ($count->exists)
@@ -63,7 +68,7 @@
                                 <div class="grid gap-3 md:grid-cols-2 items-end">
                                     <div>
                                         <x-input-label :value="__('Item')" />
-                                        <select :name="`lines[${index}][item_id]`" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" x-model="line.item_id" required>
+                                        <select x-bind:name="`lines[${index}][item_id]`" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" x-model="line.item_id" required>
                                             <option value="">{{ __('Select item') }}</option>
                                             @foreach ($items as $item)
                                                 <option value="{{ $item->id }}">
@@ -76,7 +81,7 @@
                                     <div class="flex items-end gap-2">
                                         <div class="flex-1">
                                             <x-input-label :value="__('Counted quantity (base)')" />
-                                            <x-text-input type="number" step="0.0001" min="0" class="mt-1 block w-full" :name="`lines[${index}][counted_quantity]`" x-model="line.counted_quantity" required />
+                                            <x-text-input type="number" step="0.0001" min="0" class="mt-1 block w-full" x-bind:name="`lines[${index}][counted_quantity]`" x-model="line.counted_quantity" required />
                                         </div>
                                         <button type="button" class="text-sm text-gray-500 hover:text-gray-900 pb-2" @click="removeLine(index)">&times;</button>
                                     </div>

@@ -9,7 +9,7 @@
             </div>
             <div class="flex items-center gap-3">
                 <a href="{{ route('procurement.purchase-orders.index') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ __('Purchase orders') }}</a>
-                <a href="{{ route('reports.variance') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ __('Variance report') }}</a>
+                <a href="{{ route('reports.index') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ __('Variance report') }}</a>
             </div>
         </div>
     </x-slot>

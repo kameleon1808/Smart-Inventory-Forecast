@@ -84,12 +84,27 @@ Seeded org/location/warehouses via `RbacSeeder` and inventory units/categories v
 ## Quick demo (≈5–10 min)
 1) Log in as admin/manager. Pick active location from top nav.  
 2) Inventory → Items: create an item.  
+<!-- 
+- admin nema link ka /items vec mora rucno da se promeni link stranice.
+- dodati Inventory link u nav bar-u
+- Filter ne radi, pokusao sam unos postojeceg name-a "ab et alias" ili sku-a "SKU-966" i dobijam poruku "No items found"
+ -->
 3) Stock → Receipt: post a receipt for that item.  
 4) Stock → Waste/Internal use: post a reduction.  
 5) Stock Count: create and post a count; ledger shows adjustments.  
+<!-- 
+- kako da testiram ove tri tacke?
+ -->
 6) Recipes: open a menu item, add a recipe version with ingredients.  
+<!-- 
+- kako ovo da testiram?
+ -->
 7) Menu usage: enter usage for a menu item.  
+<!-- 
+- kako ovo da testiram?
+ -->
 8) Reports → Variance: view expected vs actual.  
+
 9) Procurement → Suggestions: create a PO draft; approve; Receive goods on PO detail.  
 10) Forecasts: run “Generate forecast” and view results.  
 11) Alerts: check Anomalies/Alerts, add comments/status.  

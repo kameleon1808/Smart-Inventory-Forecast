@@ -11,7 +11,7 @@
                     {{ $lastTrainedAt ? $lastTrainedAt->format('Y-m-d H:i') : __('n/a') }}
                 </p>
             </div>
-            <a href="{{ route('reports.variance') }}" class="text-sm text-gray-600 hover:text-gray-900">
+            <a href="{{ route('reports.index') }}" class="text-sm text-gray-600 hover:text-gray-900">
                 {{ __('Variance report') }}
             </a>
         </div>

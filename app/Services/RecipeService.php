@@ -25,9 +25,36 @@ class RecipeService
     public function createVersion(MenuItem $menuItem, string $validFrom, array $ingredients): RecipeVersion
     {
         $validFromDate = Carbon::parse($validFrom)->toDateString();
-        $this->assertNoOverlap($menuItem, $validFromDate, null);
 
         return DB::transaction(function () use ($menuItem, $validFromDate, $ingredients) {
+            $latestOpen = $menuItem->recipeVersions()
+                ->whereNull('valid_to')
+                ->orderByDesc('valid_from')
+                ->first();
+
+            if ($latestOpen && $latestOpen->valid_from >= $validFromDate) {
+                throw ValidationException::withMessages([
+                    'valid_from' => 'Recipe version overlaps with an existing version.',
+                ]);
+            }
+
+            if ($latestOpen) {
+                $latestOpen->update(['valid_to' => Carbon::parse($validFromDate)->subDay()->toDateString()]);
+            }
+
+            $overlap = $menuItem->recipeVersions()
+                ->where('valid_from', '<=', $validFromDate)
+                ->where(function ($q) use ($validFromDate) {
+                    $q->whereNull('valid_to')->orWhere('valid_to', '>=', $validFromDate);
+                })
+                ->exists();
+
+            if ($overlap) {
+                throw ValidationException::withMessages([
+                    'valid_from' => 'Recipe version overlaps with an existing version.',
+                ]);
+            }
+
             $version = $menuItem->recipeVersions()->create([
                 'valid_from' => $validFromDate,
                 'valid_to' => null,

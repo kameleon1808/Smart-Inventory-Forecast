@@ -9,11 +9,25 @@ use App\Services\AuditLogger;
 use App\Services\StockCountService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class StockCountController extends Controller
 {
+    public function index(Request $request): View
+    {
+        $location = $request->attributes->get('active_location');
+
+        $counts = StockCount::with('warehouse')
+            ->where('location_id', $location->id)
+            ->withCount('lines')
+            ->orderByDesc('counted_at')
+            ->paginate(15);
+
+        return view('stock.count-index', ['counts' => $counts]);
+    }
+
     public function create(Request $request): View
     {
         return $this->form($request, new StockCount());
@@ -37,7 +51,10 @@ class StockCountController extends Controller
 
         $this->syncLines($count, $data['lines']);
 
-        return redirect()->route('stock-counts.edit', $count)->with('status', 'count-saved');
+        return redirect()->route('stock-counts.index')->with([
+            'status' => 'count-saved',
+            'created_count_id' => $count->id,
+        ]);
     }
 
     public function edit(Request $request, StockCount $stockCount): View
@@ -120,11 +137,24 @@ class StockCountController extends Controller
             ->get();
 
         $stockCount->loadMissing('lines');
+        $initialLines = $stockCount->lines->map(fn ($line) => [
+            'item_id' => $line->item_id,
+            'counted_quantity' => (float) $line->counted_quantity_in_base,
+        ])->values()->all();
+
+        if ($request->old('lines')) {
+            $initialLines = collect($request->old('lines'))
+                ->map(fn ($line) => [
+                    'item_id' => $line['item_id'] ?? '',
+                    'counted_quantity' => $line['counted_quantity'] ?? '',
+                ])->values()->all();
+        }
 
         return view('stock.count-form', [
             'count' => $stockCount,
             'warehouses' => $warehouses,
             'items' => $items,
+            'initialLines' => $initialLines,
         ]);
     }
 

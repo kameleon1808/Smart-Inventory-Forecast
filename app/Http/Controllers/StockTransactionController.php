@@ -57,6 +57,11 @@ class StockTransactionController extends Controller
         return $this->formView($request, StockTransaction::TYPE_INTERNAL_USE);
     }
 
+    public function createAdjustment(Request $request): View
+    {
+        return $this->formView($request, StockTransaction::TYPE_ADJUSTMENT);
+    }
+
     public function store(Request $request, UnitConversionService $converter, AuditLogger $audit): RedirectResponse
     {
         $organization = $request->attributes->get('active_organization');

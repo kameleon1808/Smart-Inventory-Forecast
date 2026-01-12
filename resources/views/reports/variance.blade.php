@@ -25,7 +25,7 @@
                     </div>
                     <div class="md:col-span-2">
                         <x-primary-button>{{ __('Filter') }}</x-primary-button>
-                        <a href="{{ route('reports.variance') }}" class="ml-3 text-sm text-gray-600 hover:text-gray-900">{{ __('Reset') }}</a>
+                        <a href="{{ route('reports.index') }}" class="ml-3 text-sm text-gray-600 hover:text-gray-900">{{ __('Reset') }}</a>
                     </div>
                 </form>
             </div>

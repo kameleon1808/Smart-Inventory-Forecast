@@ -48,11 +48,14 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
     Route::resource('items', ItemController::class)->except(['show', 'destroy']);
 
     Route::get('stock/ledger', [StockTransactionController::class, 'ledger'])->name('stock.ledger');
+    Route::redirect('stock', 'stock/ledger');
     Route::get('stock/receipt', [StockTransactionController::class, 'createReceipt'])->name('stock.receipt.create');
     Route::get('stock/waste', [StockTransactionController::class, 'createWaste'])->name('stock.waste.create');
     Route::get('stock/internal-use', [StockTransactionController::class, 'createInternalUse'])->name('stock.internal.create');
+    Route::get('stock/adjustment', [StockTransactionController::class, 'createAdjustment'])->name('stock.adjustment.create');
     Route::post('stock', [StockTransactionController::class, 'store'])->middleware('period.lock')->name('stock.store');
 
+    Route::get('stock-counts', [\App\Http\Controllers\StockCountController::class, 'index'])->name('stock-counts.index');
     Route::get('stock-counts/create', [\App\Http\Controllers\StockCountController::class, 'create'])->name('stock-counts.create');
     Route::post('stock-counts', [\App\Http\Controllers\StockCountController::class, 'store'])->middleware('period.lock')->name('stock-counts.store');
     Route::get('stock-counts/{stockCount}/edit', [\App\Http\Controllers\StockCountController::class, 'edit'])->name('stock-counts.edit');
@@ -66,8 +69,9 @@ Route::middleware(['auth', 'verified', 'org.context'])->group(function (): void 
     Route::get('menu-usage', [MenuItemUsageController::class, 'create'])->name('menu-usage.create');
     Route::post('menu-usage', [MenuItemUsageController::class, 'store'])->name('menu-usage.store');
 
-    Route::get('reports/expected-consumption', [ExpectedConsumptionReportController::class, 'index'])->name('reports.expected-consumption');
-    Route::get('reports/variance', [VarianceReportController::class, 'index'])->name('reports.variance');
+    Route::get('reports', [VarianceReportController::class, 'index'])->name('reports.index');
+    Route::redirect('reports/expected-consumption', '/reports');
+    Route::redirect('reports/variance', '/reports');
     Route::get('forecasts', [ForecastController::class, 'index'])->middleware('can:view-location-data')->name('forecast.index');
     Route::post('forecasts/run', [ForecastController::class, 'generate'])->middleware('can:view-location-data')->name('forecast.run');
     Route::get('anomalies', [AnomalyController::class, 'index'])->middleware('can:view-location-data')->name('anomalies.index');

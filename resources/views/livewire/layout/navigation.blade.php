@@ -33,6 +33,21 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('items.index')" :active="request()->routeIs('items.*')" wire:navigate>
+                        {{ __('Inventory') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('stock.ledger')" :active="request()->routeIs('stock.*')" wire:navigate>
+                        {{ __('Stock') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('menu-items.index')" :active="request()->routeIs('menu-items.*') || request()->routeIs('recipes.*')" wire:navigate>
+                        {{ __('Menu') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('procurement.suggestions')" :active="request()->routeIs('procurement.*')" wire:navigate>
+                        {{ __('Procurement') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')" wire:navigate>
+                        {{ __('Reports') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('forecast.index')" :active="request()->routeIs('forecast.index')" wire:navigate>
                         {{ __('Forecasts') }}
                     </x-nav-link>
@@ -120,6 +135,21 @@ new class extends Component
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('stock.ledger')" :active="request()->routeIs('stock.*')" wire:navigate>
+                {{ __('Stock') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('menu-items.index')" :active="request()->routeIs('menu-items.*') || request()->routeIs('recipes.*')" wire:navigate>
+                {{ __('Menu') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('procurement.suggestions')" :active="request()->routeIs('procurement.*')" wire:navigate>
+                {{ __('Procurement') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.index')" wire:navigate>
+                {{ __('Reports') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('items.index')" :active="request()->routeIs('items.*')" wire:navigate>
+                {{ __('Inventory') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('forecast.index')" :active="request()->routeIs('forecast.index')" wire:navigate>
                 {{ __('Forecasts') }}

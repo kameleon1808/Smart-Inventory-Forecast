@@ -11,6 +11,10 @@
                 <a href="{{ route('stock.receipt.create') }}" class="rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2">{{ __('New receipt') }}</a>
                 <a href="{{ route('stock.waste.create') }}" class="rounded-md bg-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2">{{ __('Waste') }}</a>
                 <a href="{{ route('stock.internal.create') }}" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">{{ __('Internal use') }}</a>
+                <a href="{{ route('stock.adjustment.create') }}" class="rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">{{ __('Adjustment') }}</a>
+                {{-- <a href="{{ route('stock-counts.create') }}" class="rounded-md bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">{{ __('Stock count') }}</a> --}}
+                <a href="{{ route('stock-counts.index') }}" class="rounded-md bg-slate-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2">{{ __('Stock count') }}</a>
+
             </div>
         </div>
     </x-slot>

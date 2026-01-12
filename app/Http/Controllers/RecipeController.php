@@ -23,16 +23,57 @@ class RecipeController extends Controller
             ->orderBy('name')
             ->get();
 
-        $menuItem->load('recipeVersions.ingredients');
+        $menuItem->load('recipeVersions.ingredients.item', 'recipeVersions.ingredients.unit');
+
+        $itemsForJs = $items->map(fn ($item) => [
+            'id' => $item->id,
+            'name' => $item->name,
+            'base_unit_id' => $item->baseUnit?->id,
+            'base_unit_label' => trim(($item->baseUnit?->name ?? '').' '.($item->baseUnit?->symbol ? '('.$item->baseUnit->symbol.')' : '')),
+        ])->values();
+
+        $initialIngredients = collect(old('ingredients', []))
+            ->map(fn ($ing) => [
+                'item_id' => $ing['item_id'] ?? '',
+                'unit_id' => $ing['unit_id'] ?? '',
+                'quantity' => $ing['quantity'] ?? '',
+                'unit_label' => $ing['unit_label'] ?? '',
+            ])->filter(fn ($ing) => $ing['item_id'] !== '' || $ing['quantity'] !== '')->values();
+
+        if ($initialIngredients->isEmpty() && $menuItem->recipeVersions->isNotEmpty()) {
+            $latest = $menuItem->recipeVersions->sortByDesc('valid_from')->first();
+            $initialIngredients = $latest?->ingredients->map(fn ($ing) => [
+                'item_id' => $ing->item_id,
+                'unit_id' => $ing->unit_id,
+                'quantity' => (float) $ing->quantity,
+                'unit_label' => trim(($ing->unit?->name ?? '').($ing->unit?->symbol ? ' ('.$ing->unit->symbol.')' : '')),
+            ]) ?? collect();
+        }
+
+        $latestVersion = $menuItem->recipeVersions->sortByDesc('valid_from')->first();
+        $defaultValidFrom = old('valid_from', $latestVersion?->valid_from?->copy()->addDay()->format('Y-m-d') ?? now()->toDateString());
 
         return view('recipes.create', [
             'menuItem' => $menuItem,
             'items' => $items,
+            'initialIngredients' => collect([['item_id' => '', 'unit_id' => '', 'quantity' => '']])
+                ->merge($initialIngredients)
+                ->values(),
+            'latestVersion' => $latestVersion,
+            'defaultValidFrom' => $defaultValidFrom,
+            'itemsForJs' => $itemsForJs,
         ]);
     }
 
     public function store(Request $request, MenuItem $menuItem, RecipeService $recipes, AuditLogger $audit): RedirectResponse
     {
+        $filteredIngredients = collect($request->input('ingredients', []))
+            ->filter(fn ($ing) => isset($ing['item_id'], $ing['unit_id'], $ing['quantity']) && $ing['item_id'] !== '' && $ing['unit_id'] !== '' && $ing['quantity'] !== '')
+            ->values()
+            ->all();
+
+        $request->merge(['ingredients' => $filteredIngredients]);
+
         $data = $request->validate([
             'valid_from' => ['required', 'date'],
             'ingredients' => ['required', 'array', 'min:1'],

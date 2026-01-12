@@ -20,14 +20,20 @@
             @endif
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6"
-                 x-data="recipeBuilder({ ingredients: [] })">
+                 x-data="recipeBuilder({ ingredients: @js($initialIngredients), items: @js($itemsForJs) })"
+                 x-init="init()">
                 <form method="POST" action="{{ route('recipes.store', $menuItem) }}" class="space-y-6">
                     @csrf
 
                     <div class="grid gap-6 md:grid-cols-2">
                         <div>
                             <x-input-label for="valid_from" :value="__('Valid from')" />
-                            <x-text-input id="valid_from" name="valid_from" type="date" class="mt-1 block w-full" value="{{ old('valid_from', now()->toDateString()) }}" required />
+                            <x-text-input id="valid_from" name="valid_from" type="date" class="mt-1 block w-full" value="{{ $defaultValidFrom }}" required />
+                            @if ($latestVersion)
+                                <p class="mt-1 text-xs text-gray-600">
+                                    {{ __('Latest version starts on :date and has :count ingredients. Choose a new start date to avoid overlap.', ['date' => $latestVersion->valid_from->format('Y-m-d'), 'count' => $latestVersion->ingredients->count()]) }}
+                                </p>
+                            @endif
                             <x-input-error :messages="$errors->get('valid_from')" class="mt-2" />
                         </div>
                     </div>
@@ -43,7 +49,7 @@
                                 <div class="grid gap-3 md:grid-cols-3 items-end">
                                     <div>
                                         <x-input-label :value="__('Item')" />
-                                        <select :name="`ingredients[${index}][item_id]`" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" x-model="line.item_id" required>
+                                        <select :name="`ingredients[${index}][item_id]`" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" x-model="line.item_id" @change="setUnit(index)">
                                             <option value="">{{ __('Select item') }}</option>
                                             @foreach ($items as $item)
                                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -52,19 +58,14 @@
                                         <x-input-error :messages="$errors->get('ingredients.*.item_id')" class="mt-1" />
                                     </div>
                                     <div>
-                                        <x-input-label :value="__('Unit')" />
-                                        <select :name="`ingredients[${index}][unit_id]`" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" x-model="line.unit_id" required>
-                                            <option value="">{{ __('Select unit') }}</option>
-                                            @foreach ($items as $item)
-                                                <option value="{{ $item->baseUnit?->id }}">{{ $item->baseUnit?->name }} ({{ $item->baseUnit?->symbol }})</option>
-                                            @endforeach
-                                        </select>
-                                        <x-input-error :messages="$errors->get('ingredients.*.unit_id')" class="mt-1" />
+                                        <x-input-label :value="__('Current unit')" />
+                                        <x-text-input type="text" class="mt-1 block w-full bg-gray-50" x-bind:value="unitLabel(line)" readonly />
+                                        <input type="hidden" :name="`ingredients[${index}][unit_id]`" x-model="line.unit_id">
                                     </div>
                                     <div class="flex items-end gap-2">
                                         <div class="flex-1">
                                             <x-input-label :value="__('Quantity')" />
-                                            <x-text-input type="number" step="0.0001" min="0.0001" class="mt-1 block w-full" :name="`ingredients[${index}][quantity]`" x-model="line.quantity" required />
+                                            <x-text-input type="number" step="0.0001" min="0.0001" class="mt-1 block w-full" x-bind:name="`ingredients[${index}][quantity]`" x-model="line.quantity" />
                                         </div>
                                         <button type="button" class="text-sm text-gray-500 hover:text-gray-900 pb-2" @click="removeLine(index)">&times;</button>
                                     </div>
@@ -79,27 +80,23 @@
                     </div>
                 </form>
 
-                <div class="mt-8">
-                    <h4 class="text-sm font-semibold text-gray-700 mb-2">{{ __('Existing versions') }}</h4>
-                    <ul class="space-y-1 text-sm text-gray-700">
-                        @forelse ($menuItem->recipeVersions as $version)
-                            <li>
-                                {{ $version->valid_from->format('Y-m-d') }} {{ $version->valid_to ? '→ '.$version->valid_to->format('Y-m-d') : '' }}
-                                ({{ $version->ingredients->count() }} {{ __('ingredients') }})
-                            </li>
-                        @empty
-                            <li class="text-gray-500">{{ __('No versions yet.') }}</li>
-                        @endforelse
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
-            Alpine.data('recipeBuilder', ({ ingredients }) => ({
+            Alpine.data('recipeBuilder', ({ ingredients, items }) => ({
                 ingredients: ingredients.length ? ingredients : [{ item_id: '', unit_id: '', quantity: '' }],
+                items: items || [],
+                init() {
+                    this.ingredients = this.ingredients.map((line) => ({
+                        item_id: line.item_id === null ? '' : String(line.item_id),
+                        unit_id: line.unit_id === null ? '' : String(line.unit_id),
+                        quantity: line.quantity,
+                    }));
+                    this.ingredients.forEach((line, idx) => this.ensureUnit(idx));
+                },
                 addLine() {
                     this.ingredients.push({ item_id: '', unit_id: '', quantity: '' });
                 },
@@ -108,6 +105,23 @@
                     if (this.ingredients.length === 0) {
                         this.addLine();
                     }
+                },
+                setUnit(index) {
+                    this.ensureUnit(index);
+                },
+                ensureUnit(index) {
+                    const line = this.ingredients[index];
+                    if (! line) return;
+                    const item = this.items.find((i) => Number(i.id) === Number(line.item_id));
+                    if (item && (! line.unit_id || line.unit_id !== String(item.base_unit_id))) {
+                        line.unit_id = String(item.base_unit_id);
+                        line.unit_label = item.base_unit_label;
+                    }
+                },
+                unitLabel(line) {
+                    if (line.unit_label) return line.unit_label;
+                    const item = this.items.find((i) => String(i.base_unit_id) === String(line.unit_id));
+                    return item?.base_unit_label ?? '';
                 },
             }));
         });

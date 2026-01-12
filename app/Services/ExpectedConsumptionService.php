@@ -60,16 +60,26 @@ class ExpectedConsumptionService
                 ->whereBetween('date', [$from, $to])
                 ->delete();
 
-            foreach ($aggregates as $key => $expected) {
-                [$date, $itemId] = explode('|', $key);
+            if (! empty($aggregates)) {
+                $rows = [];
+                foreach ($aggregates as $key => $expected) {
+                    [$date, $itemId] = explode('|', $key);
+                    $rows[] = [
+                        'organization_id' => $organizationId,
+                        'location_id' => $locationId,
+                        'date' => $date,
+                        'item_id' => (int) $itemId,
+                        'expected_qty_in_base' => $expected,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
 
-                ExpectedConsumptionDaily::create([
-                    'organization_id' => $organizationId,
-                    'location_id' => $locationId,
-                    'date' => $date,
-                    'item_id' => (int) $itemId,
-                    'expected_qty_in_base' => $expected,
-                ]);
+                ExpectedConsumptionDaily::upsert(
+                    $rows,
+                    ['location_id', 'date', 'item_id'],
+                    ['expected_qty_in_base', 'updated_at']
+                );
             }
         });
     }

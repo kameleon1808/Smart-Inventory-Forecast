@@ -7,7 +7,7 @@
                     {{ __('Daily usage entry') }}
                 </h2>
             </div>
-            <a href="{{ route('reports.expected-consumption') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ __('Expected consumption report') }}</a>
+            <a href="{{ route('reports.index') }}" class="text-sm text-gray-600 hover:text-gray-900">{{ __('Expected consumption report') }}</a>
         </div>
     </x-slot>
 

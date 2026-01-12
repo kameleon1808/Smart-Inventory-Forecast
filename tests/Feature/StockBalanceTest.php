@@ -108,4 +108,16 @@ class StockBalanceTest extends TestCase
 
         $this->assertEquals(1500.0, $balance);
     }
+
+    public function test_adjustment_form_is_accessible(): void
+    {
+        $admin = $this->admin();
+        $warehouse = Warehouse::where('name', 'Central Warehouse')->firstOrFail();
+
+        $this->actingAs($admin)
+            ->withSession(['active_location_id' => $warehouse->location_id])
+            ->get('/stock/adjustment')
+            ->assertOk()
+            ->assertSee(__('Adjustment'));
+    }
 }

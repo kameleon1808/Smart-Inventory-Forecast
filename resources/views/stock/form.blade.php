@@ -14,6 +14,9 @@
                         @case(\App\Domain\Inventory\StockTransaction::TYPE_INTERNAL_USE)
                             {{ __('Internal use') }}
                             @break
+                        @case(\App\Domain\Inventory\StockTransaction::TYPE_ADJUSTMENT)
+                            {{ __('Adjustment') }}
+                            @break
                         @default
                             {{ __('Stock transaction') }}
                     @endswitch

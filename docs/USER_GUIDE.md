@@ -35,7 +35,7 @@ Tip: Active location controls what data you see and can change.
 ## 3) Inventory (Items, Units/Conversions)
 - **Purpose**: Maintain item catalog.
 - **Who**: Manager/Admin.
-- **Navigation**: Inventory → Items.
+- **Navigation**: Top nav “Inventory” → Items.
 - **Steps**:
   1. Click “Add item”.
   2. Fill SKU, name, category, base unit, pack/min/safety stock, lead time, status.
@@ -45,73 +45,85 @@ Common mistakes: Wrong base unit—review unit before saving.
 
 ## 4) Warehouses & Ledger
 - **Purpose**: Track stock movements per warehouse/location.
-- **Navigation**: Stock → Ledger; Stock → Receipt/Waste/Internal Use.
-- **Receipts/Waste/Internal Use/Adjustments**:
-  1. Choose warehouse, item, unit, quantity.
-  2. Receipts require supplier name; Waste/Internal use require reason.
-  3. Submit to post to ledger.
-- Adjustments: use type “Adjustment”.
-Tip: Period lock blocks dates before lock for non-admins.
+- **Navigation**: Top nav “Stock” opens the Ledger. Header buttons: “New receipt”, “Waste”, “Internal use”, “Adjustment”, and “Stock count” (opens the stock count list at `/stock-counts`). You can also open the forms directly via Stock → Receipt/Waste/Internal Use/Adjustment.
+- **How to post**:
+  1. From Ledger, click the needed action button (e.g., New receipt or Adjustment).
+  2. Fill warehouse, date/time, item, unit, quantity. Receipts also need supplier/invoice; Waste/Internal use need a reason. Adjustment is for manual corrections (enter a positive qty to increase stock, negative to reduce).
+  3. Submit to post to the ledger and return to the ledger list.
+- Tip: Period lock blocks back-dated entries for non-admins; adjust the lock date (Admin/Manager) if you need to post older movements.
 
 ## 5) Stock Count / Inventory
-- **Purpose**: Align system stock to physical count.
-- **Navigation**: Stock Count (create/edit/post).
-- **Steps**:
-  1. Create a count (warehouse, date, lines with counted qty).
-  2. Edit if needed while in draft.
-  3. Post (Manager/Admin) to create stock count adjustment in ledger.
-Common mistakes: Posting with wrong location; ensure active location matches warehouse.
+- **Purpose**: Align system stock to physical count and auto-generate adjustments.
+- **Navigation**: From Stock → Ledger header click “Stock count” (links to `/stock-counts`). The list shows drafts and posted counts. Click “New stock count” to create or “Edit” on a draft to continue.
+- **Detailed steps**:
+  1. Click “New stock count”.
+  2. Select Warehouse and Count date/time.
+  3. Add lines: pick Item, enter counted quantity in the base unit shown (e.g., g, l, pcs). Add more lines as needed.
+  4. Click **Save draft**. You will be redirected to the list with a banner. The draft appears at the top; use “Continue editing” or “Edit” to reopen it.
+  5. Review/edit draft if needed.
+  6. Post (Manager/Admin): inside the draft screen, click **Post**. The system compares counted vs current balance and creates a “Stock count” entry in the Stock ledger for the difference.
+- **Notes**: Active location must match the warehouse. Use base units only. Ledger filters must include the count date/time to see the generated adjustment.
 
 ## 6) Recipes / Normatives
 - **Purpose**: Define ingredient norms for menu items with versioning.
-- **Navigation**: Recipes → select Menu Item.
-- **Steps**:
-  1. Pick menu item, set valid_from.
-  2. Add ingredients (item, unit, qty).
-  3. Save to create a new version.
-Tip: Avoid overlapping versions by date.
+- **Navigation**: Top nav “Menu” → Menu items → click “Recipe” on a menu item.
+- **Detailed steps**:
+  1. Open Menu items → click **Recipe** on the chosen menu item.
+  2. Set **Valid from** for the new version (each version is date-scoped).
+  3. Add ingredients: select Item, edit the quantity, and see the **Current unit** (read-only, from the item’s base unit). The dropdown is only for changing the unit if needed; the system stores quantity in base units automatically.
+  4. Publish (Save). The page lists “Existing versions” with dates and the ingredient breakdown so you can confirm what already exists.
+- **Tips / constraints**:
+  - Avoid overlapping validity ranges; if a version already covers that date, pick a different start/end.
+  - Ensure needed units/conversions exist for your ingredients.
+  - Use new versions to evolve recipes over time without losing history.
 
 ## 7) Menu Usage (sales proxy)
 - **Purpose**: Record menu items used/sold per day.
-- **Navigation**: Menu Usage.
+- **Navigation**: Direct link `/menu-usage` (or Top nav “Menu” → Menu Usage if present). Takođe, na stranicama Reports → Expected Consumption i Reports → Variance postoji link “Enter usage” koji vodi na istu formu.
 - **Steps**:
-  1. Select date, menu item, quantity.
-  2. Submit to feed expected consumption.
+  1. Pick the date (used_on).
+  2. Choose the Menu item and enter Quantity (sold/used count).
+  3. Submit. The record feeds expected consumption calculations and downstream variance/procurement/forecast logic for the active location.
+- Notes: Ensure the active location is set correctly. Recipes must exist for the menu items to translate usage into expected ingredient consumption.
 
-## 8) Expected Consumption & Variance Report
-- **Purpose**: Compare expected vs actual usage.
-- **Navigation**: Reports → Expected Consumption; Reports → Variance.
-- **Variance steps**:
-  1. Pick date range (and warehouse optional).
-  2. View expected, actual, variance %, net change.
-Troubleshooting: Ensure recipes and usage exist to populate expected.
+## 8) Reports (Variance)
+- **Purpose**: Compare expected vs actual usage at the item level.
+- **Navigation**: Top nav “Reports” (`/reports`).
+- **Steps**:
+  1. Pick date range (warehouse optional).
+  2. Review expected vs actual, variance %, net change. Actual comes from ledger movements that subtract stock (waste/internal use/adjustments); expected from menu usage × recipe ingredients.
+- **Troubleshooting**: verify recipes exist for the dates, menu usage entries are present, and ledger movements exist for actuals; ensure active location is correct; if filtering by warehouse, confirm items have movements there.
 
 ## 9) Procurement Suggestions
 - **Purpose**: Suggest reorder quantities.
 - **Navigation**: Procurement → Suggestions.
 - **Steps**:
   1. Select warehouse.
-  2. Review suggested quantities; edit if needed.
-  3. Create PO draft (supplier required).
-Tip: Suggestions use stock, expected/actual, and lead time/safety stock.
+  2. Review suggested quantities per item (computed from current stock, expected/actual usage, lead time, safety stock, min stock). You can adjust quantities before creating a PO.
+  3. Enter Supplier and create PO draft.
+- **Notes**: Suggestions factor in open purchase orders and stock balances. Use PO draft for further approval/receiving in Purchase Orders.
 
 ## 10) Purchase Orders & Receiving
 - **Purpose**: Manage POs and receipts into stock.
 - **Navigation**: Procurement → Purchase Orders.
-- **PO Approval**: Manager/Admin via “Approve”.
+- **PO lifecycle**:
+  - Draft: created from Suggestions or manually; editable.
+  - Approve/Send: Manager/Admin via “Approve”.
+  - Status moves through DRAFT/SUBMITTED/APPROVED/SENT/PARTIALLY_RECEIVED/CLOSED.
 - **Receiving**:
-  1. Open PO detail → Receive goods.
-  2. Enter received qty per line (prefilled remaining).
-  3. Post receipt to update stock and PO status (partial/closed).
+  1. Open PO detail → “Receive goods”.
+  2. Per line, received qty is prefilled with remaining; adjust if partial.
+  3. Post receipt to update stock and PO status (partial or closed). Receipts create stock transactions (type RECEIPT).
+- **Notes**: Only Manager/Admin can approve/send/receive. Partial receipts leave PO in PARTIALLY_RECEIVED; fully received closes it.
 
 ## 11) Forecasts
 - **Purpose**: Generate baseline demand forecasts (org/location, items).
 - **Navigation**: Forecasts.
 - **Steps**:
-  1. Select location/horizon (optional item filter).
-  2. Click Generate forecast (queued).
-  3. Latest predictions list per day/item.
-Notes: Forecast-service URL set via `FORECAST_SERVICE_URL`. Scheduled train/predict jobs run weekly/daily.
+  1. Select location and horizon (14d default). Optional: filter items.
+  2. Click “Generate forecast” (queued call to forecast-service).
+  3. Review latest predictions table per day/item (with lower/upper if available).
+- **Notes**: `FORECAST_SERVICE_URL` points to FastAPI service; scheduled jobs train weekly and predict daily. Ensure forecast-service is running before generating. Active location scopes results.
 
 ## 12) Anomalies (Alerts)
 - **Purpose**: Flag waste spikes, variance spikes, adjustment counts.
