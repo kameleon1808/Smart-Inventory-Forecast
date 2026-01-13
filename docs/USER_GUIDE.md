@@ -126,27 +126,30 @@ Common mistakes: Wrong base unit—review unit before saving.
 - **Notes**: `FORECAST_SERVICE_URL` points to FastAPI service; scheduled jobs train weekly and predict daily. Ensure forecast-service is running before generating. Active location scopes results.
 
 ## 12) Anomalies (Alerts)
-- **Purpose**: Flag waste spikes, variance spikes, adjustment counts.
+- **Purpose**: Highlight risky behavior (waste spikes, large variance, too many adjustments) so managers can react.
 - **Navigation**: Alerts.
 - **Steps**:
-  1. Filter by status/severity/type.
-  2. Open alert, add comments.
-  3. Managers/Admins can update status (Open/Investigating/Resolved/False Positive).
-Tip: Thresholds configurable via Alerts → Thresholds.
+  1. Use filters (status/severity/type) to narrow the list.
+  2. Click an alert to see details and context; add a comment if you’re investigating.
+  3. Managers/Admins can change status (Open → Investigating → Resolved or mark as False Positive).
+- **Tip**: Tune detection thresholds via Alerts → Thresholds (e.g., % variance limit, waste spike threshold, adjustment count per week).
 
 ## 13) Import / Export CSV
 - **Navigation**: Data → Import/Export.
-- **Import types**: items, unit conversions, recipes, opening stock. Supports dry-run (validate only) and queues jobs.
-- **Export types**: stock ledger, balances, procurement suggestions, variance.
-Note: Uploaded files stored under storage; monitor import job list for status/results.
+- **Imports**: items, unit conversions, recipes, opening stock. Supports dry-run (validate only) and queues large jobs.
+- **Exports**: stock ledger, current balances, procurement suggestions, variance report.
+- **Tips**:
+  - Use Dry-run first to catch validation errors without saving.
+  - Imports run on the queue; watch the import job list for status/results.
+  - Uploaded CSVs are stored under `storage/`.
 
 ## 14) Reports
-- **Pages**: Expected Consumption, Variance (under Reports menu).
-- **Usage**: choose dates/filters and review tables.
+- **Navigation**: Reports (single page showing expected vs actual variance).
+- **Usage**: Pick a date range, click Filter, and review per-item expected/actual/variance/net change. Use “Enter usage” link to add menu usage if data is missing.
 
 ## 15) Audit Log / Period Lock
-- **Audit Log**: Navigation → Audit; view actions (items, recipes, PO approvals, stock counts, adjustments).
-- **Period Lock**: Navigation → Period lock (Manager/Admin); set `lock_before_date` to block back-dated transactions for non-admins.
+- **Audit Log**: Navigation → Audit; browse who changed what (items, recipes, PO approvals, stock counts, adjustments).
+- **Period Lock**: Navigation → Period lock (Manager/Admin); set `lock_before_date` to block back-dated transactions for non-admins. Admins can adjust the lock when needed.
 
 ---
 

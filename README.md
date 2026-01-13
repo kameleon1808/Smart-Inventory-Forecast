@@ -1,6 +1,8 @@
 # Smart Inventory + Forecast
 
-Inventory, procurement, recipes, and analytics hub built with Laravel 12 (Livewire Breeze) plus a Python FastAPI forecast microservice. Supports multi-location context, RBAC, stock ledger, counts, recipes/normatives, menu usage, expected/variance reporting, procurement (suggestions, POs, receiving), forecasts, anomalies/alerts, CSV import/export, audit log, and period locks.
+Inventory, procurement, recipes, and analytics hub built with Laravel 12 (Livewire Breeze) plus a Python FastAPI forecast microservice. It supports multi-location operations, RBAC, stock ledger and counts, recipes/normatives, menu usage → expected/variance reporting, procurement (suggestions, POs, receiving), forecasts, anomalies/alerts, CSV import/export, audit log, and period locks.
+
+The core idea: keep stock and consumption accurate across locations/warehouses, automate procurement suggestions and forecasts, and surface anomalies for managers to review.
 
 ## Highlights
 - Inventory & stock: items, units/conversions, stock ledger (receipts, waste, internal use, adjustments), stock counts.
@@ -30,19 +32,24 @@ php artisan key:generate
 touch database/database.sqlite
 php artisan migrate --seed
 ```
-3) Frontend dev server  
+3) (Optional) demo dataset  
+```bash
+php artisan demo:seed   # refreshes DB with rich demo data
+# or enable DEMO_SEED=true in .env, then: php artisan migrate:fresh --seed
+```
+4) Frontend dev server  
 ```bash
 npm run dev
 ```
-4) Laravel app  
+5) Laravel app  
 ```bash
 php artisan serve
 ```
-5) Queue worker (for imports, forecasts, anomaly scans, etc.)  
+6) Queue worker (imports, forecasts, anomaly scans, CSV, etc.)  
 ```bash
 php artisan queue:work
 ```
-6) Scheduler (cron)  
+7) Scheduler (cron)  
 Add to crontab: `* * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1`
 
 ### Demo data
@@ -71,38 +78,25 @@ pip install -r requirements.txt
 python -m pytest   # optional
 uvicorn forecast_service.main:app --reload --port 9000
 ```
-Laravel reaches it via `FORECAST_SERVICE_URL` (.env, default `http://127.0.0.1:9000`).
+Laravel reaches it via `FORECAST_SERVICE_URL` (.env, default `http://127.0.0.1:9000`). Keep this service running while queue workers call forecasts.
 
 ## Demo data / logins
 Seeded users (password: `password`):
 - Admin: `admin@example.com`
 - Manager: `manager@example.com`
 - Waiter: `waiter@example.com`
+- Demo Admin (with location assigned): `demo@example.com`
 
 Seeded org/location/warehouses via `RbacSeeder` and inventory units/categories via `InventorySeeder`.
 
 ## Quick demo (≈5–10 min)
 1) Log in as admin/manager. Pick active location from top nav.  
 2) Inventory → Items: create an item.  
-<!-- 
-- admin nema link ka /items vec mora rucno da se promeni link stranice.
-- dodati Inventory link u nav bar-u
-- Filter ne radi, pokusao sam unos postojeceg name-a "ab et alias" ili sku-a "SKU-966" i dobijam poruku "No items found"
- -->
 3) Stock → Receipt: post a receipt for that item.  
 4) Stock → Waste/Internal use: post a reduction.  
 5) Stock Count: create and post a count; ledger shows adjustments.  
-<!-- 
-- kako da testiram ove tri tacke?
- -->
 6) Recipes: open a menu item, add a recipe version with ingredients.  
-<!-- 
-- kako ovo da testiram?
- -->
 7) Menu usage: enter usage for a menu item.  
-<!-- 
-- kako ovo da testiram?
- -->
 8) Reports → Variance: view expected vs actual.  
 
 9) Procurement → Suggestions: create a PO draft; approve; Receive goods on PO detail.  
